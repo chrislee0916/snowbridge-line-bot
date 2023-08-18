@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { ParseBaseQueryMiddleware } from './middleware/parseBaseQuery.middleware';
+import { DatabaseModule } from './database/database.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { ParseBaseQueryMiddleware } from './middleware/parseBaseQuery.middleware
           ? ['.env.test.local', '.env.test', '.env']
           : '.env',
     }),
+    DatabaseModule,
   ],
   controllers: [AppController],
   providers: [AppService],
