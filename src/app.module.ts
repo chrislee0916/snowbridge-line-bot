@@ -1,5 +1,4 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { ParseBaseQueryMiddleware } from './middleware/parseBaseQuery.middleware';
@@ -11,6 +10,9 @@ import { AuthService } from './controller/auth/auth.service';
 import { Auth, AuthSchema } from './controller/auth/auth.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { JwtService } from '@nestjs/jwt';
+import { ControllerModule_v1 } from './controller/v1/v1.module';
+import { UserService } from './controller/v1/user/user.service';
+import { User, UserSchema } from './controller/v1/user/user.schema';
 
 @Module({
   imports: [
@@ -27,15 +29,18 @@ import { JwtService } from '@nestjs/jwt';
           : '.env',
     }),
     DatabaseModule,
-    MongooseModule.forFeature([{ name: Auth.name, schema: AuthSchema }]),
-
+    MongooseModule.forFeature([
+      { name: Auth.name, schema: AuthSchema },
+      { name: User.name, schema: UserSchema },
+    ]),
     AuthModule,
+    ControllerModule_v1,
   ],
-  controllers: [AppController],
   providers: [
     AuthService,
     JwtService,
     AppService,
+    UserService,
     {
       provide: APP_GUARD,
       useClass: AuthGuard,

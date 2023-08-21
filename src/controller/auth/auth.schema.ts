@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Schema as MongooseSchema } from 'mongoose';
 import { DefaultSchema } from 'src/database/schemas/default.schema';
 
 export type AuthDocument = Auth & Document;
@@ -22,6 +22,13 @@ export class Auth extends DefaultSchema {
     require: true,
   })
   password: string;
+
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    ref: 'User',
+    default: null,
+  })
+  user: string;
 }
 
 export const AuthSchema = SchemaFactory.createForClass(Auth);

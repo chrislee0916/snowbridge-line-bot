@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class Default_responses_Dto {
+export class DefaultResponsesDto {
   @ApiProperty({
     required: true,
     description: '執行狀態',
@@ -9,7 +9,7 @@ export class Default_responses_Dto {
   readonly success: boolean;
 }
 
-export class Default_data_Dto {
+export class DefaultDataDto {
   @ApiProperty({
     description: '資料庫唯一 ID',
     example: '62791f7a9704f94c81211b51',
@@ -35,7 +35,7 @@ export class Default_data_Dto {
   updatedAt?: number;
 }
 
-export class Default_delete_Dto {
+export class DefaultDeleteDto {
   @ApiProperty({
     required: true,
     description: '刪除 id',
@@ -44,7 +44,7 @@ export class Default_delete_Dto {
   readonly ids: string[];
 }
 
-export class Default_list_responses_Dto {
+export class DefaultListResponsesDto {
   @ApiProperty({
     description: '總數',
     example: 100,
@@ -70,7 +70,7 @@ export class Default_list_responses_Dto {
   sort: string;
 }
 
-export class Default_list_query_Dto {
+export class DefaultListQueryDto {
   @ApiProperty({
     description: '數量',
     example: 25,
@@ -90,7 +90,7 @@ export class Default_list_query_Dto {
   sort: string;
 }
 
-export class Default_DB_list {
+export class DefaultDBList {
   @ApiProperty({
     description: '數量',
     example: 10,

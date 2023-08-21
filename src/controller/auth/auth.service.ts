@@ -7,6 +7,7 @@ import * as bcrypt from 'bcrypt';
 import * as dayjs from 'dayjs';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { UserService } from '../v1/user/user.service';
 
 export class AuthServiceLoginResponses {
   token: string;
@@ -19,6 +20,7 @@ export class AuthService extends DatabaseService {
     @InjectModel(Auth.name) private DB: Model<AuthDocument>,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly userService: UserService,
   ) {
     super(DB);
   }
@@ -146,6 +148,9 @@ export class AuthService extends DatabaseService {
     const Auth = await this.ensureExist(authId);
     console.log('Auth ', Auth);
 
-    return { authId: Auth._id.toString() };
+    const User = await this.userService.ensureExist(Auth.user);
+    console.log('User ', User);
+
+    return { authId: Auth._id.toString(), user: User };
   }
 }
