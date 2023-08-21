@@ -1,7 +1,7 @@
 import { Prop, Schema } from '@nestjs/mongoose';
 
 @Schema()
-export class Default_Schema {
+export class DefaultSchema {
   @Prop({
     type: Boolean,
     default: false,

@@ -4,7 +4,6 @@ import { AppCreateDto } from './dto/app-create';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
-  ApiOkResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';

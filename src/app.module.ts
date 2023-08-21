@@ -4,6 +4,13 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { ParseBaseQueryMiddleware } from './middleware/parseBaseQuery.middleware';
 import { DatabaseModule } from './database/database.module';
+import { AuthModule } from './controller/auth/auth.module';
+import { AuthGuard } from './controller/auth/guard/auth.guard';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthService } from './controller/auth/auth.service';
+import { Auth, AuthSchema } from './controller/auth/auth.schema';
+import { MongooseModule } from '@nestjs/mongoose';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -20,9 +27,20 @@ import { DatabaseModule } from './database/database.module';
           : '.env',
     }),
     DatabaseModule,
+    MongooseModule.forFeature([{ name: Auth.name, schema: AuthSchema }]),
+
+    AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AuthService,
+    JwtService,
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {

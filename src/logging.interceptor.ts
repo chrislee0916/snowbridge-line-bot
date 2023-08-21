@@ -25,7 +25,7 @@ export class LoggingInterceptor implements NestInterceptor {
     Logger.log(`${url}`, '    url     ');
     Logger.log(`${JSON.stringify(headers)}`, ' headers ');
 
-    if (Object.keys(headers.authorization).length)
+    if (headers.authorization && Object.keys(headers.authorization).length)
       Logger.log(`${headers.authorization}`, ' headers Authorization ');
 
     if (Object.keys(params).length) Logger.log(params, ' params ');

@@ -49,7 +49,7 @@ export class DatabaseService implements IDatabase {
         HttpStatus.BAD_REQUEST,
       );
 
-    return { data: doc, error: null, status: HttpStatus.OK };
+    return doc;
   }
 
   async delete(id: string) {
@@ -59,7 +59,7 @@ export class DatabaseService implements IDatabase {
     if (data == null) return ret;
 
     data = data.set('trashed', true);
-    return { data: await data.save(), error: null, status: HttpStatus.OK };
+    return await data.save();
   }
 
   isObjectId(Id: string) {

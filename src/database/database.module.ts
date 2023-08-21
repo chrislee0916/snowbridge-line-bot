@@ -30,7 +30,7 @@ import { MongooseModule } from '@nestjs/mongoose';
           obj.pass = configService.get('DATABASE_USER_PASSWORD');
         }
 
-        Logger.log(obj, ' DB 設定檔  ');
+        // Logger.log(obj, ' DB 設定檔  ');
 
         mongoose.set('debug', true);
 
