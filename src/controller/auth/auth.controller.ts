@@ -17,28 +17,28 @@ export class AuthController {
     private readonly userService: UserService,
   ) {}
 
-  @Post('register')
-  @ApiOperation({
-    summary: '註冊', // 標題
-    description: '使用帳號密碼進行註冊', // 描述
-    operationId: '', // id
-    // deprecated: true, // 註銷
-  })
-  @ApiOkResponse({
-    type: DefaultResponsesDto,
-  })
-  async register(@Body() body: AuthRegisterDto): Promise<DefaultResponsesDto> {
-    const { email, password } = body;
-    const Auth = await this.authService.register({ email, password });
+  // @Post('register')
+  // @ApiOperation({
+  //   summary: '註冊', // 標題
+  //   description: '使用帳號密碼進行註冊', // 描述
+  //   operationId: '', // id
+  //   // deprecated: true, // 註銷
+  // })
+  // @ApiOkResponse({
+  //   type: DefaultResponsesDto,
+  // })
+  // async register(@Body() body: AuthRegisterDto): Promise<DefaultResponsesDto> {
+  //   const { email, password } = body;
+  //   const Auth = await this.authService.register({ email, password });
 
-    const User = await this.userService.create({ username: email });
-    console.log('User ', User);
+  //   const User = await this.userService.create({ username: email });
+  //   console.log('User ', User);
 
-    Auth.set('user', User._id);
-    await Auth.save();
+  //   Auth.set('user', User._id);
+  //   await Auth.save();
 
-    return { success: true };
-  }
+  //   return { success: true };
+  // }
 
   @Post('login')
   @ApiOperation({

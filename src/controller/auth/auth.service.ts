@@ -71,37 +71,37 @@ export class AuthService extends DatabaseService {
     } catch (err) {}
   }
 
-  async register({
-    email,
-    password,
-  }: {
-    email: string;
-    password: string;
-  }): Promise<AuthDocument> {
-    console.log('================ auth register ====================');
-    console.log('email ', email);
+  // async register({
+  //   email,
+  //   password,
+  // }: {
+  //   email: string;
+  //   password: string;
+  // }): Promise<AuthDocument> {
+  //   console.log('================ auth register ====================');
+  //   console.log('email ', email);
 
-    const authFindOne = await this.DB.findOne({ email })
-      .where('trashed')
-      .equals(false);
+  //   const authFindOne = await this.DB.findOne({ email })
+  //     .where('trashed')
+  //     .equals(false);
 
-    if (authFindOne != null)
-      throw new HttpException(
-        this.configService.get('ERR_AUTH_REGISTER_USER_EXIST'),
-        HttpStatus.BAD_REQUEST,
-      );
+  //   if (authFindOne != null)
+  //     throw new HttpException(
+  //       this.configService.get('ERR_AUTH_REGISTER_USER_EXIST'),
+  //       HttpStatus.BAD_REQUEST,
+  //     );
 
-    const authObj = {
-      email,
-      password: this.encodePassword(password),
-    };
+  //   const authObj = {
+  //     email,
+  //     password: this.encodePassword(password),
+  //   };
 
-    const Auth = await this.DB.create(authObj);
-    console.log('Auth ', Auth);
+  //   const Auth = await this.DB.create(authObj);
+  //   console.log('Auth ', Auth);
 
-    console.log('====================================');
-    return Auth;
-  }
+  //   console.log('====================================');
+  //   return Auth;
+  // }
 
   async login({
     email,
@@ -111,9 +111,15 @@ export class AuthService extends DatabaseService {
     password: string;
   }): Promise<AuthServiceLoginResponses> {
     console.log('================ auth login ====================');
-    const Auth = await this.DB.findOne({ email })
-      .where('trashed')
-      .equals(false);
+    // const Auth = await this.DB.findOne({ email })
+    //   .where('trashed')
+    //   .equals(false);
+
+    const Auth = {
+      _id: '64e57ab042d618aeaecd71a4',
+      email: 'username@gmail.com',
+      password: '$2b$10$JrrMXZX/Lxnln2D/w0b7FOA2Eal0DPvQLCUkAP.HZJe9GX/9fTlzi'
+    }
 
     if (!Auth)
       throw new HttpException(

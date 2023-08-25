@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class DefaultResponsesDto {
   @ApiProperty({
@@ -12,7 +13,7 @@ export class DefaultResponsesDto {
 export class DefaultDataDto {
   @ApiProperty({
     description: '資料庫唯一 ID',
-    example: '62791f7a9704f94c81211b51',
+    example: '',
   })
   _id?: string;
 
@@ -30,7 +31,7 @@ export class DefaultDataDto {
 
   @ApiProperty({
     description: '更新時間',
-    example: 1652105082190,
+    example: 0,
   })
   updatedAt?: number;
 }
@@ -65,29 +66,35 @@ export class DefaultListResponsesDto {
 
   @ApiProperty({
     description: '排序',
-    example: { createdAt: -1 },
+    example: -1 ,
   })
-  sort: string;
+  sort: number;
 }
 
 export class DefaultListQueryDto {
   @ApiProperty({
+    required: false,
     description: '數量',
     example: 25,
   })
+  @IsNumber()
   limit: number;
 
   @ApiProperty({
+    required: false,
     description: '跳過數量',
     example: 0,
   })
+  @IsNumber()
   skip: number;
 
   @ApiProperty({
+    required: false,
     description: '排序',
-    example: { createdAt: -1 },
+    example: -1,
   })
-  sort: string;
+  @IsNumber()
+  sort: number;
 }
 
 export class DefaultDBList {
