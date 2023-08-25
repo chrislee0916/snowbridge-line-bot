@@ -6,7 +6,6 @@ import { Public } from './guard/public.decorator';
 import { AuthService } from './auth.service';
 import { AuthLoginDto } from 'src/controller/dto/auth-login.dto';
 import { AuthLoginResponsesDto } from 'src/controller/dto/auth-login_responses.dto';
-import { UserService } from '../v1/user/user.service';
 
 @Public()
 @ApiTags('auth (驗證)')
@@ -14,7 +13,6 @@ import { UserService } from '../v1/user/user.service';
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly userService: UserService,
   ) {}
 
   // @Post('register')

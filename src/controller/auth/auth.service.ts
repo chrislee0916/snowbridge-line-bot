@@ -1,13 +1,9 @@
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { Auth, AuthDocument } from './auth.schema';
-import { DatabaseService } from '../../database/database.service';
+
 import * as bcrypt from 'bcrypt';
 import * as dayjs from 'dayjs';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { UserService } from '../v1/user/user.service';
 
 export class AuthServiceLoginResponses {
   token: string;
@@ -15,14 +11,16 @@ export class AuthServiceLoginResponses {
 }
 
 @Injectable()
-export class AuthService extends DatabaseService {
+export class AuthService {
+  Auth = {
+    _id: '64e57ab042d618aeaecd71a4',
+    email: 'username@gmail.com',
+    password: '$2b$10$JrrMXZX/Lxnln2D/w0b7FOA2Eal0DPvQLCUkAP.HZJe9GX/9fTlzi'
+  }
   constructor(
-    @InjectModel(Auth.name) private DB: Model<AuthDocument>,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
-    private readonly userService: UserService,
   ) {
-    super(DB);
   }
 
   // Decoding the JWT Token
@@ -37,14 +35,6 @@ export class AuthService extends DatabaseService {
     return bcrypt.compareSync(password, userPassword);
   }
 
-  // Encode User's password
-  // 編碼用戶密碼
-  encodePassword(password: string): string {
-    const salt: string = bcrypt.genSaltSync(10);
-    console.log('salt ', salt);
-
-    return bcrypt.hashSync(password, 10);
-  }
 
   // 建立 Token
   // 使用 unix 秒的時間
@@ -71,38 +61,6 @@ export class AuthService extends DatabaseService {
     } catch (err) {}
   }
 
-  // async register({
-  //   email,
-  //   password,
-  // }: {
-  //   email: string;
-  //   password: string;
-  // }): Promise<AuthDocument> {
-  //   console.log('================ auth register ====================');
-  //   console.log('email ', email);
-
-  //   const authFindOne = await this.DB.findOne({ email })
-  //     .where('trashed')
-  //     .equals(false);
-
-  //   if (authFindOne != null)
-  //     throw new HttpException(
-  //       this.configService.get('ERR_AUTH_REGISTER_USER_EXIST'),
-  //       HttpStatus.BAD_REQUEST,
-  //     );
-
-  //   const authObj = {
-  //     email,
-  //     password: this.encodePassword(password),
-  //   };
-
-  //   const Auth = await this.DB.create(authObj);
-  //   console.log('Auth ', Auth);
-
-  //   console.log('====================================');
-  //   return Auth;
-  // }
-
   async login({
     email,
     password,
@@ -115,19 +73,15 @@ export class AuthService extends DatabaseService {
     //   .where('trashed')
     //   .equals(false);
 
-    const Auth = {
-      _id: '64e57ab042d618aeaecd71a4',
-      email: 'username@gmail.com',
-      password: '$2b$10$JrrMXZX/Lxnln2D/w0b7FOA2Eal0DPvQLCUkAP.HZJe9GX/9fTlzi'
-    }
 
-    if (!Auth)
+
+    if (this.Auth.email !== email)
       throw new HttpException(
         this.configService.get('ERR_AUTH_LOGIN_NOT_REGISTER_USER'),
         HttpStatus.BAD_REQUEST,
       );
 
-    const isPasswordValid = this.isPasswordValid(password, Auth.password);
+    const isPasswordValid = this.isPasswordValid(password, this.Auth.password);
 
     if (!isPasswordValid)
       throw new HttpException(
@@ -135,7 +89,7 @@ export class AuthService extends DatabaseService {
         HttpStatus.BAD_REQUEST,
       );
 
-    return await this.generateToken(Auth._id);
+    return await this.generateToken(this.Auth._id);
   }
 
   async validate(token: string) {
@@ -151,12 +105,15 @@ export class AuthService extends DatabaseService {
       );
 
     const authId: string = decoded.payload.authId;
-    const Auth = await this.ensureExist(authId);
-    console.log('Auth ', Auth);
+    // const Auth = await this.ensureExist(authId);
+    if(authId !== this.Auth._id) {
+      throw new HttpException(
+        this.configService.get('ERR_RESOURCE_NOT_FOUND'),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    console.log('Auth ', this.Auth);
 
-    const User = await this.userService.ensureExist(Auth.user);
-    console.log('User ', User);
-
-    return { authId: Auth._id.toString(), user: User };
+    return { authId, user: this.Auth };
   }
 }
