@@ -7,7 +7,6 @@ import { ConfigService } from '@nestjs/config';
 import { Client } from '@line/bot-sdk';
 import { HttpService } from '@nestjs/axios';
 import { catchError, firstValueFrom, map } from 'rxjs';
-import { createSignIn, createSignature, getSignInList, getSignatureList } from '../postchain-sdk/postchainAPI'
 import { LinebotUserCheckInShowResponsesDto, LinebotUserShowResponsesDto } from 'src/controller/dto/linebot-user-show_response.dto';
 import { LinebotUserListDto } from 'src/controller/dto/linebot-user-list.dto';
 import { LinebotUserCheckInListResponsesDto, LinebotUserListResponsesDto } from 'src/controller/dto/linebot-user-list_response.dto';
@@ -65,7 +64,7 @@ export class LinebotUserService {
       // 使用 blockchain SDK => 簽名
       const { file } = createDefaultPdfDto;
       const now = new Date().getTime();
-      await createSignature(this.keyObj, userId, file, now);
+      await this.postchainService.createSignature(this.keyObj, userId, file, now);
       return { success: true }
     } catch (err) {
       throw new InternalServerErrorException(err.status || this.configService.get('ERR_SYSTEM_ERROR'));
@@ -88,7 +87,6 @@ export class LinebotUserService {
       }
     } catch (err) {
       throw new InternalServerErrorException(err.status || this.configService.get('ERR_SYSTEM_ERROR'));
-
     }
   }
 

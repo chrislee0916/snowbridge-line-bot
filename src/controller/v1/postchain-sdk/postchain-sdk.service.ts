@@ -1,6 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ganerateECDSAKey } from './postchainAPI';
 const pcl = require('postchain-client')
 
 @Injectable()
