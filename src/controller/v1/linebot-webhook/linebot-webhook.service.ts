@@ -24,7 +24,6 @@ export class LinebotWebhookService {
         const userId: string = item.source.userId;
         // 是否已簽名過
         let isSignature: any = await this.postchainSdkService.getSignatureList(userId, '', '', 25, 0, 1);
-        // console.log('isSignature: ', isSignature)
         if(isSignature.length) {
           // 更換選單
           await this.lineBotUserService.changeMenu2ShowFile(userId);
