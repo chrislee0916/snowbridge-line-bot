@@ -36,16 +36,7 @@ export class LinebotUserService {
       let resp: any = await this.postchainService.createSignIn(this.keyObj, userId, name, phone, now);
 
       // 更換選單
-      await firstValueFrom(this.httpService.post(`https://api.line.me/v2/bot/user/${userId}/richmenu/${this.configService.get('LINEBOT_SIGNATURE_MENU')}`,
-        {}, {
-        headers: {
-          Authorization: `Bearer ${this.configService.get('LINEBOT_ACCESS_TOKEN')}`
-        }
-      }).pipe(
-        catchError(err => {
-          throw err
-        }
-      )))
+      await this.changeMenu2Signature(userId);
 
       return {
         userId,
@@ -54,6 +45,7 @@ export class LinebotUserService {
         createdAt: now
       }
     } catch (err) {
+
       throw new InternalServerErrorException(err.status || this.configService.get('ERR_SYSTEM_ERROR'));
     }
   }
@@ -65,6 +57,10 @@ export class LinebotUserService {
       const { file } = createDefaultPdfDto;
       const now = new Date().getTime();
       await this.postchainService.createSignature(this.keyObj, userId, file, now);
+
+      // 更換選單
+      await this.changeMenu2ShowFile(userId);
+
       return { success: true }
     } catch (err) {
       throw new InternalServerErrorException(err.status || this.configService.get('ERR_SYSTEM_ERROR'));
@@ -107,6 +103,32 @@ export class LinebotUserService {
       throw new InternalServerErrorException(err.status || this.configService.get('ERR_SYSTEM_ERROR'));
 
     }
+  }
+
+  async changeMenu2Signature(userId: string) {
+      return firstValueFrom(this.httpService.post(`https://api.line.me/v2/bot/user/${userId}/richmenu/${this.configService.get('LINEBOT_SIGNATURE_MENU')}`,
+      {}, {
+      headers: {
+        Authorization: `Bearer ${this.configService.get('LINEBOT_ACCESS_TOKEN')}`
+      }
+    }).pipe(
+      catchError(err => {
+        throw err
+      }
+    )))
+  }
+
+  async changeMenu2ShowFile(userId: string){
+    return firstValueFrom(this.httpService.post(`https://api.line.me/v2/bot/user/${userId}/richmenu/${this.configService.get('LINEBOT_SHOWFILE_MENU')}`,
+        {}, {
+        headers: {
+          Authorization: `Bearer ${this.configService.get('LINEBOT_ACCESS_TOKEN')}`
+        }
+      }).pipe(
+        catchError(err => {
+          throw err
+        }
+      )))
   }
 
 }

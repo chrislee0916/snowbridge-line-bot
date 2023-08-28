@@ -9,5 +9,6 @@ import { PostchainSdkModule } from '../postchain-sdk/postchain-sdk.module';
   imports: [HttpModule, PostchainSdkModule],
   controllers: [LinebotUserController],
   providers: [LinebotUserService],
+  exports: [LinebotUserService]
 })
 export class LinebotUserModule {}
