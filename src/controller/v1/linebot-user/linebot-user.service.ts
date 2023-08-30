@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, HttpException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateDefaultPdfDto } from 'src/controller/dto/default-pdf-create.dto';
 import { LinebotUserDocument } from './linebot-user.schema';
 import { CreateLinebotUserDto } from 'src/controller/dto/linebot-user-create.dto';
@@ -45,8 +45,10 @@ export class LinebotUserService {
         createdAt: now
       }
     } catch (err) {
-
-      throw new InternalServerErrorException(err.status || this.configService.get('ERR_SYSTEM_ERROR'));
+      if(err.response?.status || err.status) {
+        throw new BadRequestException('錯誤的請求')
+      }
+      throw new InternalServerErrorException(this.configService.get('ERR_SYSTEM_ERROR'));
     }
   }
 
@@ -63,8 +65,10 @@ export class LinebotUserService {
 
       return { success: true }
     } catch (err) {
-      throw new InternalServerErrorException(err.status || this.configService.get('ERR_SYSTEM_ERROR'));
-
+      if(err.response?.status || err.status) {
+        throw new BadRequestException('錯誤的請求')
+      }
+      throw new InternalServerErrorException(this.configService.get('ERR_SYSTEM_ERROR'));
     }
   }
 
@@ -82,7 +86,10 @@ export class LinebotUserService {
         items: resp,
       }
     } catch (err) {
-      throw new InternalServerErrorException(err.status || this.configService.get('ERR_SYSTEM_ERROR'));
+      if(err.status) {
+        throw new BadRequestException('錯誤的請求')
+      }
+      throw new InternalServerErrorException(this.configService.get('ERR_SYSTEM_ERROR'));
     }
   }
 
@@ -100,35 +107,31 @@ export class LinebotUserService {
       }
 
     } catch (err) {
-      throw new InternalServerErrorException(err.status || this.configService.get('ERR_SYSTEM_ERROR'));
+      if(err.status) {
+        throw new BadRequestException('錯誤的請求')
+      }
+      throw new InternalServerErrorException(this.configService.get('ERR_SYSTEM_ERROR'));
 
     }
   }
 
-  async changeMenu2Signature(userId: string) {
-      return firstValueFrom(this.httpService.post(`https://api.line.me/v2/bot/user/${userId}/richmenu/${this.configService.get('LINEBOT_SIGNATURE_MENU')}`,
+  changeMenu2Signature(userId: string) {
+    return firstValueFrom(this.httpService.post(`https://api.line.me/v2/bot/user/${userId}/richmenu/${this.configService.get('LINEBOT_SIGNATURE_MENU')}`,
       {}, {
       headers: {
         Authorization: `Bearer ${this.configService.get('LINEBOT_ACCESS_TOKEN')}`
       }
-    }).pipe(
-      catchError(err => {
-        throw err
-      }
-    )))
+    }))
   }
 
-  async changeMenu2ShowFile(userId: string){
+
+  changeMenu2ShowFile(userId: string){
     return firstValueFrom(this.httpService.post(`https://api.line.me/v2/bot/user/${userId}/richmenu/${this.configService.get('LINEBOT_SHOWFILE_MENU')}`,
         {}, {
         headers: {
           Authorization: `Bearer ${this.configService.get('LINEBOT_ACCESS_TOKEN')}`
         }
-      }).pipe(
-        catchError(err => {
-          throw err
-        }
-      )))
+      }))
   }
 
 }

@@ -25,7 +25,10 @@ export class DefaultPdfService {
       await this.postchainService.uploadTemplate(this.keyObj, file, now)
       return { success: true }
     } catch (err) {
-      throw new InternalServerErrorException(err.status || this.configService.get('ERR_SYSTEM_ERROR'));
+      if(err.status) {
+        throw new BadRequestException('錯誤的請求')
+      }
+      throw new InternalServerErrorException(this.configService.get('ERR_SYSTEM_ERROR'));
     }
 
   }
@@ -36,7 +39,10 @@ export class DefaultPdfService {
       let resp = await this.postchainService.getTemplate();
       return resp;
     } catch (err) {
-      throw new InternalServerErrorException(err.status || this.configService.get('ERR_SYSTEM_ERROR'));
+      if(err.status) {
+        throw new BadRequestException('錯誤的請求')
+      }
+      throw new InternalServerErrorException(this.configService.get('ERR_SYSTEM_ERROR'));
     }
 
   }
