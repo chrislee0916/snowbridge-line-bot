@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { LoggingInterceptor } from './logging.interceptor';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { json } from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: {
@@ -22,6 +23,8 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true,
   }))
+
+  app.use(json({ limit: '5mb' }));
 
   const options = new DocumentBuilder()
     .setTitle('Template Server API')
