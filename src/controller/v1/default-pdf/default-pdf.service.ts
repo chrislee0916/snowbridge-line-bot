@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { CreateDefaultPdfDto } from 'src/controller/dto/default-pdf-create.dto';
 import { DefaultResponsesDto } from 'src/controller/dto/default.dto';
@@ -25,6 +25,7 @@ export class DefaultPdfService {
       await this.postchainService.uploadTemplate(this.keyObj, file, now)
       return { success: true }
     } catch (err) {
+      console.log(err)
       if(err.status) {
         throw new BadRequestException('錯誤的請求')
       }
@@ -39,6 +40,7 @@ export class DefaultPdfService {
       let resp = await this.postchainService.getTemplate();
       return resp;
     } catch (err) {
+      console.log(err)
       if(err.status) {
         throw new BadRequestException('錯誤的請求')
       }

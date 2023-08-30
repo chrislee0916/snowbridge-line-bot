@@ -1,4 +1,4 @@
-import { BadRequestException, HttpException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, HttpException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { CreateDefaultPdfDto } from 'src/controller/dto/default-pdf-create.dto';
 import { LinebotUserDocument } from './linebot-user.schema';
 import { CreateLinebotUserDto } from 'src/controller/dto/linebot-user-create.dto';
@@ -48,6 +48,7 @@ export class LinebotUserService {
         createdAt: now
       }
     } catch (err) {
+      console.log(err)
       if(err.response?.status || err.status) {
         throw new BadRequestException('錯誤的請求')
       }
@@ -70,6 +71,7 @@ export class LinebotUserService {
 
       return { success: true }
     } catch (err) {
+      console.log(err)
       if(err.response?.status || err.status) {
         throw new BadRequestException('錯誤的請求')
       }
@@ -91,6 +93,7 @@ export class LinebotUserService {
         items: resp,
       }
     } catch (err) {
+      console.log(err)
       if(err.status) {
         throw new BadRequestException('錯誤的請求')
       }
@@ -112,6 +115,7 @@ export class LinebotUserService {
       }
 
     } catch (err) {
+      console.log(err)
       if(err.status) {
         throw new BadRequestException('錯誤的請求')
       }
