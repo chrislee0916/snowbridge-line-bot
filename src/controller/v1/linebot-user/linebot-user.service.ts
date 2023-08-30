@@ -30,8 +30,11 @@ export class LinebotUserService {
   // 簽到
   async checkIn(createLinebotUserDto: CreateLinebotUserDto): Promise<LinebotUserShowResponsesDto> {
     try {
-      // 使用 blockchain SDK => 簽到
       const { userId, name, phone } = createLinebotUserDto;
+
+      await this.checkUserIdIsExist(userId);
+
+      // 使用 blockchain SDK => 簽到
       const now = new Date().getTime();
       let resp: any = await this.postchainService.createSignIn(this.keyObj, userId, name, phone, now);
 
@@ -55,6 +58,8 @@ export class LinebotUserService {
   // 簽名
   async signature(userId: string, createDefaultPdfDto: CreateDefaultPdfDto): Promise<DefaultResponsesDto>{
     try {
+
+      await this.checkUserIdIsExist(userId);
       // 使用 blockchain SDK => 簽名
       const { file } = createDefaultPdfDto;
       const now = new Date().getTime();
@@ -113,6 +118,15 @@ export class LinebotUserService {
       throw new InternalServerErrorException(this.configService.get('ERR_SYSTEM_ERROR'));
 
     }
+  }
+
+  checkUserIdIsExist(userId: string) {
+    return firstValueFrom(this.httpService.get(`https://api.line.me/v2/bot/profile/${userId}`,
+      {
+      headers: {
+        Authorization: `Bearer ${this.configService.get('LINEBOT_ACCESS_TOKEN')}`
+      }
+    }))
   }
 
   changeMenu2Signature(userId: string) {
