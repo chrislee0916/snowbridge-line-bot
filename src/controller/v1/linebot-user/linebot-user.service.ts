@@ -49,8 +49,10 @@ export class LinebotUserService {
       }
     } catch (err) {
       console.log(err)
-      if(err.isAxiosError || err.status) {
-        throw new BadRequestException(err.response?.data?.message || '錯誤的請求');
+      if(err.isAxiosError) {
+        throw new HttpException(err.response?.data?.message, err.response.status)
+      } else if(err.status === 'rejected') {
+        throw new BadRequestException('錯誤的請求');
       }
       throw new InternalServerErrorException(this.configService.get('ERR_SYSTEM_ERROR'));
     }
@@ -72,8 +74,10 @@ export class LinebotUserService {
       return { success: true }
     } catch (err) {
       console.log(err)
-      if(err.isAxiosError || err.status) {
-        throw new BadRequestException(err.response?.data?.message || '錯誤的請求');
+      if(err.isAxiosError) {
+        throw new HttpException(err.response?.data?.message, err.response.status)
+      } else if(err.status === 'rejected') {
+        throw new BadRequestException('錯誤的請求');
       }
       throw new InternalServerErrorException(this.configService.get('ERR_SYSTEM_ERROR'));
     }
