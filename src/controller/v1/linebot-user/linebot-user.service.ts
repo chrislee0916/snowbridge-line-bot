@@ -49,8 +49,8 @@ export class LinebotUserService {
       }
     } catch (err) {
       console.log(err)
-      if(err.response?.status || err.status) {
-        throw new BadRequestException('錯誤的請求')
+      if(err.isAxiosError || err.status) {
+        throw new BadRequestException(err.response?.data?.message || '錯誤的請求');
       }
       throw new InternalServerErrorException(this.configService.get('ERR_SYSTEM_ERROR'));
     }
@@ -72,8 +72,8 @@ export class LinebotUserService {
       return { success: true }
     } catch (err) {
       console.log(err)
-      if(err.response?.status || err.status) {
-        throw new BadRequestException('錯誤的請求')
+      if(err.isAxiosError || err.status) {
+        throw new BadRequestException(err.response?.data?.message || '錯誤的請求');
       }
       throw new InternalServerErrorException(this.configService.get('ERR_SYSTEM_ERROR'));
     }
@@ -86,7 +86,10 @@ export class LinebotUserService {
       // 使用 blockchain SDK => 簽到列表
       const { userId, name, phone, limit, skip, sort } = query;
       let resp = await this.postchainService.getSignInList(userId, name, phone, limit, skip, sort);
+      const total: any = await this.postchainService.getSignInList('', '', '', 0, 0, -1);
+
       return {
+        total: total.length,
         limit,
         skip,
         sort,
@@ -107,7 +110,10 @@ export class LinebotUserService {
       // 使用 blockchain SDK => 簽名列表
       const { userId, name, phone, limit, skip, sort } = query;
       let resp = await this.postchainService.getSignatureList(userId, name, phone, limit, skip, sort)
+      const total: any = await this.postchainService.getSignatureList('', '', '', 0, 0, -1);
+
       return {
+        total: total.length,
         limit,
         skip,
         sort,
@@ -141,7 +147,6 @@ export class LinebotUserService {
       }
     }))
   }
-
 
   changeMenu2ShowFile(userId: string){
     return firstValueFrom(this.httpService.post(`https://api.line.me/v2/bot/user/${userId}/richmenu/${this.configService.get('LINEBOT_SHOWFILE_MENU')}`,

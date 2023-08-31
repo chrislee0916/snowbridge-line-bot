@@ -4,15 +4,20 @@ const pcl = require('postchain-client')
 
 @Injectable()
 export class PostchainSdkService {
-    node_api_url: string = 'http://203.145.222.91:7740';
-    blockchainRID: string = '867B7599447025CBFBA7D733B1E4393315826B6F5634A90CE357F2276F188BA2';
-    rest = pcl.restClient.createRestClient(this.node_api_url, this.blockchainRID, 5);
-    gtx = pcl.gtxClient.createClient(this.rest, Buffer.from(this.blockchainRID, 'hex'),  []);
+    node_api_url: string;
+    blockchainRID: string;
+    rest: any;
+    gtx: any;
     keyObj: any = {}
 
     constructor(
         private readonly configService: ConfigService
     ){
+        this.node_api_url = this.configService.get('POSTCHAIN_NODE_API_URL');
+        this.blockchainRID = this.configService.get('POSTCHAIN_RID');
+        this.rest = pcl.restClient.createRestClient(this.node_api_url, this.blockchainRID, 5);
+        this.gtx = pcl.gtxClient.createClient(this.rest, Buffer.from(this.blockchainRID, 'hex'),  []);
+
         const privateKey: string = this.configService.get('POSTCHAIN_PRIVATE_KEY');
         const publicKey: string = this.configService.get('POSTCHAIN_PUBLIC_KEY');
         this.keyObj.privKey = Buffer.from(privateKey, 'hex');
@@ -200,7 +205,7 @@ export class PostchainSdkService {
                 skipNumber: skip,
                 sortNumber: sort
             }).then((value) => {
-                console.log('value ', value)
+                // console.log('value ', value)
                 return resolve(value)
             }).catch((err) => {
                 console.log('err ', err)
