@@ -90,7 +90,7 @@ export class LinebotUserService {
       // 使用 blockchain SDK => 簽到列表
       const { userId, name, phone, limit, skip, sort } = query;
       let resp = await this.postchainService.getSignInList(userId, name, phone, limit, skip, sort);
-      const total: any = await this.postchainService.getSignInList('', '', '', 0, 0, -1);
+      const total: any = await this.postchainService.getSignInList(userId, name, phone, 0, 0, -1);
 
       return {
         total: total.length,
@@ -114,7 +114,7 @@ export class LinebotUserService {
       // 使用 blockchain SDK => 簽名列表
       const { userId, name, phone, limit, skip, sort } = query;
       let resp = await this.postchainService.getSignatureList(userId, name, phone, limit, skip, sort)
-      const total: any = await this.postchainService.getSignatureList('', '', '', 0, 0, -1);
+      const total: any = await this.postchainService.getSignatureList(userId, name, phone, 0, 0, -1);
 
       return {
         total: total.length,
