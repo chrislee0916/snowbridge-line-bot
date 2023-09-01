@@ -30,7 +30,7 @@ export class LinebotWebhookService {
           continue
         }
 
-        // 是否已簽名過
+        // 是否已簽到過
         let isSignIn: any = await this.postchainSdkService.getSignInList(userId, '', '', 25, 0, 1);
         if(isSignIn.length) {
           // 更換選單

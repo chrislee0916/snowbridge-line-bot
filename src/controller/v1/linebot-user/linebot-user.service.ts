@@ -32,25 +32,42 @@ export class LinebotUserService {
     try {
       const { userId, name, phone } = createLinebotUserDto;
 
-      await this.checkUserIdIsExist(userId);
-
-      // 使用 blockchain SDK => 簽到
       const now = new Date().getTime();
-      let resp: any = await this.postchainService.createSignIn(this.keyObj, userId, name, phone, now);
-
-      // 更換選單
-      await this.changeMenu2Signature(userId);
-
-      return {
+      const res: LinebotUserShowResponsesDto = {
         userId,
         name,
         phone,
         createdAt: now
+      };
+
+      // user 是否在這個 provider
+      await this.checkUserIdIsExist(userId);
+
+      // 是否已簽名過
+      let isSignature: any = await this.postchainService.getSignatureList(userId, '', '', 25, 0, 1);
+      if(isSignature.length) {
+        // 更換選單
+        await this.changeMenu2ShowFile(userId);
+        return res
       }
+
+      // 是否已簽到過
+      let isSignIn: any = await this.postchainService.getSignInList(userId, '', '', 25, 0, 1);
+      if(isSignIn.length) {
+        // 更換選單
+        await this.changeMenu2Signature(userId);
+        return res
+      }
+      // 使用 blockchain SDK => 簽到
+      let resp: any = await this.postchainService.createSignIn(this.keyObj, userId, name, phone, now);
+      // 更換選單
+      await this.changeMenu2Signature(userId);
+      return res;
+
     } catch (err) {
       console.log(err)
       if(err.isAxiosError) {
-        throw new HttpException(err.response?.data?.message, err.response.status)
+        throw new HttpException(err.response?.data?.message || 'axiosErr', err.response?.status || 400)
       } else if(err.status === 'rejected') {
         throw new BadRequestException('錯誤的請求');
       }
@@ -61,21 +78,25 @@ export class LinebotUserService {
   // 簽名
   async signature(userId: string, createDefaultPdfDto: CreateDefaultPdfDto): Promise<DefaultResponsesDto>{
     try {
-
+      // user 是否在這個 provider
       await this.checkUserIdIsExist(userId);
-      // 使用 blockchain SDK => 簽名
-      const { file } = createDefaultPdfDto;
-      const now = new Date().getTime();
-      await this.postchainService.createSignature(this.keyObj, userId, file, now);
 
+      // 是否已簽名過
+      let isSignature: any = await this.postchainService.getSignatureList(userId, '', '', 25, 0, 1);
+      if(!isSignature.length) {
+        // 使用 blockchain SDK => 簽名
+        const { file } = createDefaultPdfDto;
+        const now = new Date().getTime();
+        await this.postchainService.createSignature(this.keyObj, userId, file, now);
+      }
       // 更換選單
       await this.changeMenu2ShowFile(userId);
-
       return { success: true }
+
     } catch (err) {
       console.log(err)
       if(err.isAxiosError) {
-        throw new HttpException(err.response?.data?.message, err.response.status)
+        throw new HttpException(err.response?.data?.message || 'axiosErr', err.response?.status || 400)
       } else if(err.status === 'rejected') {
         throw new BadRequestException('錯誤的請求');
       }
