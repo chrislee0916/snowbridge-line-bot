@@ -52,7 +52,7 @@ export class LinebotUserController {
   }
 
   @Get('signature-list')
-  @ApiBearerAuth()
+  // @ApiBearerAuth()
   @ApiOperation({
     summary: '簽名的列表',
     description: ''
