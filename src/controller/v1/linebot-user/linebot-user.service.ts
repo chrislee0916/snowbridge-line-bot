@@ -33,37 +33,20 @@ export class LinebotUserService {
       const { userId, name, phone } = createLinebotUserDto;
 
       const now = new Date().getTime();
-      const res: LinebotUserShowResponsesDto = {
-        userId,
-        name,
-        phone,
-        createdAt: now
-      };
-
       // user 是否在這個 provider
       await this.checkUserIdIsExist(userId);
-
-      // 是否已簽名過
-      let isSignature: any = await this.postchainService.getSignatureList(userId, '', '', 25, 0, 1);
-      if(isSignature.length) {
-        // 更換選單
-        await this.changeMenu2ShowFile(userId);
-        return res
-      }
-
-      // 是否已簽到過
-      let isSignIn: any = await this.postchainService.getSignInList(userId, '', '', 25, 0, 1);
-      if(isSignIn.length) {
-        // 更換選單
-        await this.changeMenu2Signature(userId);
-        return res
-      }
 
       // 使用 blockchain SDK => 簽到
       let resp: any = await this.postchainService.createSignIn(this.keyObj, userId, name, phone, now);
       // 更換選單
       await this.changeMenu2Signature(userId);
-      return res;
+
+      return {
+        userId,
+        name,
+        phone,
+        createdAt: now
+      };
 
     } catch (err) {
       console.log(err)
