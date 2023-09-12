@@ -69,6 +69,14 @@ export class LinebotWebhookService {
           });
 
         }
+      } else if(type === 'message' && message.type === 'text' && message.text === '-help') {
+        const { userId } = item.source;
+        if(userId) {
+          this.client.replyMessage(item.replyToken, {
+            type: 'text',
+            text: '目前功能如下 :\n 1) 查詢簽到'
+          });
+        }
       }
     }
   }
